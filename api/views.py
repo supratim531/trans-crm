@@ -20,11 +20,13 @@ class Register(APIView):
 
             if serializer.is_valid():
                 user = serializer.save()
+                serializedData = RegisterSerializer(user)
                 token = Token.objects.create(user=user)
 
                 return Response({
                     "message": f"User {serializer.data['username']} is created",
-                    "token": token.key
+                    "token": token.key,
+                    "user": serializedData.data
                 }, status=status.HTTP_201_CREATED)
             else:
                 return Response({

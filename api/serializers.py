@@ -18,22 +18,11 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email']
 
 class RegisterSerializer(serializers.Serializer):
-    first_name = serializers.CharField(max_length=100)
+    first_name = serializers.CharField(max_length=100, write_only=True)
     email = serializers.EmailField()
     username = serializers.CharField(max_length=100)
-    password = serializers.CharField(max_length=100)
-    last_name = serializers.CharField(max_length=50)
-
-    # def get_fields(self):
-    #     fields = super().get_fields()
-    #     exclude_fields = self.context.get('exclude_fields', ['password'])
-
-    #     for field in exclude_fields:
-    #         # providing a default prevents a KeyError
-    #         # if the field does not exist
-    #         fields.pop(field, default=None)
-
-    #     return fields
+    password = serializers.CharField(max_length=100, write_only=True)
+    last_name = serializers.CharField(max_length=50, write_only=True)
 
     def create(self, validated_data):
         # Extracting role_id
@@ -50,21 +39,6 @@ class RegisterSerializer(serializers.Serializer):
         employee = Employee(None, validated_data['username'], validated_data['first_name'], validated_data['email'], team_id, role_id)
         employee.save()
         return user
-
-# class RegisterSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['id', 'first_name', 'last_name', 'email', 'username', 'password']
-#         extra_kwargs = {"password": {"write_only": True}}
-
-#     def create(self, validated_data):
-#         role = Role.objects.get(role_name="staff")
-#         serializedData = RoleSerializer(role)
-#         role_id = serializedData.data["role_id"]
-#         user = User.objects.create_user(validated_data['username'], validated_data['email'], validated_data['password'])
-#         employee = Employee(validated_data['username'], f"{validated_data['first_name']} {validated_data['last_name']}", validated_data['email'], team_id, role_id)
-#         employee.save()
-#         return user
 
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
